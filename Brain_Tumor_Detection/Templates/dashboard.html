@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Dashboard — NeuroScan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090d;--surface:#0f1117;--card:#0f1319;--card2:#13181f;
+  --border:rgba(255,255,255,0.07);--border-md:rgba(255,255,255,0.11);
+  --text:#e4e8f0;--muted:#7a8094;--dim:#3f4558;
+  --accent:#4f8ef7;--accent-glow:rgba(79,142,247,0.15);--accent-bdr:rgba(79,142,247,0.22);
+  --success:#34d399;--success-bg:rgba(52,211,153,0.1);--success-bdr:rgba(52,211,153,0.22);
+  --danger:#f87171;--danger-bg:rgba(248,113,113,0.1);--danger-bdr:rgba(248,113,113,0.22);
+  --warning:#fbbf24;
+  --radius:12px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* ── Nav ─────────────────────────────────────────────── */
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;height:58px;
+  background:rgba(7,9,13,0.9);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 8px var(--accent);
+}
+.nav-logo span{font-family:'DM Serif Display',serif;font-size:1.15rem;color:var(--text);}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--accent-glow);border:1px solid var(--accent-bdr);
+  color:var(--accent);font-size:12px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-name{font-size:13px;color:var(--muted);}
+.btn-logout{font-size:13px;color:var(--dim);text-decoration:none;
+  padding:5px 10px;border-radius:7px;transition:color .15s,background .15s;}
+.btn-logout:hover{color:var(--danger);background:var(--danger-bg);}
+
+/* ── Layout ──────────────────────────────────────────── */
+.page{max-width:1160px;margin:0 auto;padding:2.5rem 2rem;}
+.header{margin-bottom:2rem;}
+.header h2{font-family:'DM Serif Display',serif;font-size:1.8rem;font-weight:400;letter-spacing:-.01em;}
+.header p{color:var(--muted);font-size:14px;margin-top:5px;}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+@media(max-width:820px){.grid{grid-template-columns:1fr;}}
+
+/* ── Cards ───────────────────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:1.75rem;}
+.card-title{font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:1.25rem;}
+
+/* ── Drop zone ───────────────────────────────────────── */
+.dropzone{
+  border:1.5px dashed var(--border-md);border-radius:14px;
+  padding:3rem 2rem;text-align:center;cursor:pointer;
+  transition:border-color .2s,background .2s;position:relative;
+}
+.dropzone:hover,.dropzone.drag-over{
+  border-color:var(--accent);background:var(--accent-glow);
+}
+.dropzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.dz-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:var(--accent-glow);border:1px solid var(--accent-bdr);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1rem;
+}
+.dz-icon svg{width:24px;height:24px;stroke:var(--accent);}
+.dz-title{font-size:15px;font-weight:500;margin-bottom:6px;}
+.dz-sub{font-size:13px;color:var(--muted);}
+.dz-sub b{color:var(--accent);}
+
+/* Preview strip */
+.preview-img{
+  width:100%;max-height:220px;object-fit:contain;border-radius:10px;
+  border:1px solid var(--border);margin-top:1rem;display:none;
+}
+
+/* Analyze button */
+.btn-analyze{
+  width:100%;margin-top:1rem;padding:11px;border-radius:10px;border:none;
+  background:var(--accent);color:#fff;font-size:14px;font-weight:500;
+  cursor:pointer;font-family:'Inter',sans-serif;
+  transition:background .15s,transform .1s;display:none;
+}
+.btn-analyze:hover{background:#6fa3f9;}
+.btn-analyze:active{transform:scale(0.99);}
+.btn-analyze.loading{opacity:.7;pointer-events:none;}
+
+/* ── Result panel ─────────────────────────────────────── */
+.result-empty{
+  height:100%;min-height:320px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--dim);text-align:center;gap:10px;
+}
+.result-empty svg{width:40px;height:40px;opacity:.3;}
+.result-empty p{font-size:13px;}
+
+.result-content{display:none;}
+
+/* Badge */
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:100px;font-size:12px;font-weight:500;
+  margin-bottom:1.25rem;
+}
+.badge-tumor{background:var(--danger-bg);border:1px solid var(--danger-bdr);color:var(--danger);}
+.badge-clear{background:var(--success-bg);border:1px solid var(--success-bdr);color:var(--success);}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+.result-label{font-family:'DM Serif Display',serif;font-size:1.9rem;font-weight:400;margin-bottom:.4rem;}
+.result-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:1.5rem;}
+
+/* Circular chart */
+.chart-wrap{display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem;}
+.donut-wrap{position:relative;flex-shrink:0;}
+.donut-wrap canvas{display:block;}
+.donut-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;pointer-events:none;
+}
+.donut-pct{font-size:22px;font-weight:600;color:var(--text);}
+.donut-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+
+/* Score bars */
+.scores{flex:1;}
+.score-row{margin-bottom:10px;}
+.score-head{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;}
+.score-name{color:var(--muted);}
+.score-val{font-weight:500;}
+.score-track{height:4px;background:var(--dim);border-radius:4px;overflow:hidden;}
+.score-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+
+/* Divider */
+.divider{height:1px;background:var(--border);margin:1.25rem 0;}
+
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.info-cell{background:var(--card2);border-radius:10px;padding:.85rem 1rem;}
+.info-cell-lbl{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;}
+.info-cell-val{font-size:14px;font-weight:500;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="{{ url_for('dashboard') }}" class="nav-logo">
+    <span class="nav-logo-dot"></span>
+    <span>NeuroScan</span>
+  </a>
+  <div class="nav-right">
+    <span class="nav-name">{{ user.name }}</span>
+    <div class="avatar">{{ user.name[0].upper() }}</div>
+    <a href="{{ url_for('logout') }}" class="btn-logout">Sign out</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="header">
+    <h2>MRI Analysis</h2>
+    <p>Upload a brain MRI scan to detect tumor type and confidence level.</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- LEFT: Upload -->
+    <div class="card">
+      <div class="card-title">Upload scan</div>
+
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept="image/*"/>
+        <div class="dz-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <div class="dz-title">Drop your MRI scan here</div>
+        <div class="dz-sub">or <b>click to browse</b> &nbsp;·&nbsp; JPG, PNG, BMP</div>
+      </div>
+
+      <img id="previewImg" class="preview-img" alt="MRI preview"/>
+      <button class="btn-analyze" id="analyzeBtn" onclick="analyze()">Analyze scan</button>
+    </div>
+
+    <!-- RIGHT: Result -->
+    <div class="card" id="resultCard">
+      <div class="card-title">Analysis result</div>
+
+      <div class="result-empty" id="resultEmpty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <p>Upload a scan on the left<br/>to see your results here.</p>
+      </div>
+
+      <div class="result-content" id="resultContent">
+        <div id="resultBadge" class="badge"></div>
+        <div id="resultLabel" class="result-label"></div>
+        <div id="resultDesc" class="result-desc"></div>
+
+        <div class="chart-wrap">
+          <div class="donut-wrap">
+            <canvas id="donutChart" width="110" height="110"></canvas>
+            <div class="donut-center">
+              <div class="donut-pct" id="donutPct">0%</div>
+              <div class="donut-lbl">confidence</div>
+            </div>
+          </div>
+          <div class="scores" id="scoresList"></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="info-grid" id="infoGrid"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── File selection & preview ────────────────────────────────────────────────
+const dropzone   = document.getElementById('dropzone');
+const fileInput  = document.getElementById('fileInput');
+const previewImg = document.getElementById('previewImg');
+const analyzeBtn = document.getElementById('analyzeBtn');
+let selectedFile = null;
+
+function setFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  selectedFile = file;
+  const url = URL.createObjectURL(file);
+  previewImg.src = url;
+  previewImg.style.display = 'block';
+  analyzeBtn.style.display = 'block';
+}
+
+fileInput.addEventListener('change', e => setFile(e.target.files[0]));
+
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('drag-over');
+  setFile(e.dataTransfer.files[0]);
+});
+
+// ── Donut chart ─────────────────────────────────────────────────────────────
+function drawDonut(pct, color) {
+  const canvas = document.getElementById('donutChart');
+  const ctx    = canvas.getContext('2d');
+  const cx = 55, cy = 55, r = 42, lw = 10;
+  const start = -Math.PI / 2;
+  const end   = start + (pct / 100) * 2 * Math.PI;
+
+  ctx.clearRect(0, 0, 110, 110);
+
+  // Track
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+  ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+  ctx.lineWidth = lw;
+  ctx.stroke();
+
+  // Fill — animated via requestAnimationFrame
+  let current = 0;
+  function draw() {
+    ctx.clearRect(0, 0, 110, 110);
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = lw;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, start, start + (current / 100) * 2 * Math.PI);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lw;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    document.getElementById('donutPct').textContent = Math.round(current) + '%';
+    if (current < pct) {
+      current = Math.min(current + 1.5, pct);
+      requestAnimationFrame(draw);
+    }
+  }
+  draw();
+}
+
+// ── Analyze ──────────────────────────────────────────────────────────────────
+const COLOR_MAP = {
+  glioma:     '#f87171',
+  meningioma: '#fbbf24',
+  notumor:    '#34d399',
+  pituitary:  '#a78bfa',
+};
+const CLASS_ORDER = ['glioma', 'meningioma', 'notumor', 'pituitary'];
+const LABELS = {
+  glioma:'Glioma', meningioma:'Meningioma', notumor:'No Tumor', pituitary:'Pituitary Tumor'
+};
+
+async function analyze() {
+  if (!selectedFile) return;
+  analyzeBtn.classList.add('loading');
+  analyzeBtn.textContent = 'Analyzing…';
+
+  const fd = new FormData();
+  fd.append('file', selectedFile);
+
+  try {
+    const res  = await fetch('/predict', { method: 'POST', body: fd });
+    const data = await res.json();
+
+    if (data.error) {
+      alert('Error: ' + data.error);
+      return;
+    }
+
+    // Show result panel
+    document.getElementById('resultEmpty').style.display   = 'none';
+    document.getElementById('resultContent').style.display = 'block';
+
+    // Badge
+    const badge  = document.getElementById('resultBadge');
+    badge.innerHTML = `<span class="badge-dot"></span>${data.is_tumor ? 'Tumor detected' : 'No tumor detected'}`;
+    badge.className = 'badge ' + (data.is_tumor ? 'badge-tumor' : 'badge-clear');
+
+    // Label + description
+    document.getElementById('resultLabel').textContent = data.label;
+    document.getElementById('resultDesc').textContent  = data.description;
+
+    // Donut
+    const mainColor = COLOR_MAP[data.prediction] || '#4f8ef7';
+    drawDonut(data.confidence, mainColor);
+
+    // Score bars
+    const scoresEl = document.getElementById('scoresList');
+    scoresEl.innerHTML = CLASS_ORDER.map(cls => {
+      const val = data.all_scores[cls] || 0;
+      const col = COLOR_MAP[cls];
+      return `
+        <div class="score-row">
+          <div class="score-head">
+            <span class="score-name">${LABELS[cls]}</span>
+            <span class="score-val" style="color:${col}">${val.toFixed(1)}%</span>
+          </div>
+          <div class="score-track">
+            <div class="score-fill" style="width:${val}%;background:${col}"></div>
+          </div>
+        </div>`;
+    }).join('');
+
+    // Info grid
+    const now = new Date();
+    document.getElementById('infoGrid').innerHTML = `
+      <div class="info-cell">
+        <div class="info-cell-lbl">Prediction</div>
+        <div class="info-cell-val">${data.label}</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-cell-lbl">Confidence</div>
+        <div class="info-cell-val" style="color:${mainColor}">${data.confidence}%</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-cell-lbl">File</div>
+        <div class="info-cell-val" style="font-size:12px;color:var(--muted)">${selectedFile.name}</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-cell-lbl">Analyzed at</div>
+        <div class="info-cell-val" style="font-size:12px;color:var(--muted)">
+          ${now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+        </div>
+      </div>`;
+
+  } catch (err) {
+    alert('Request failed. Is the server running?');
+    console.error(err);
+  } finally {
+    analyzeBtn.classList.remove('loading');
+    analyzeBtn.textContent = 'Analyze scan';
+  }
+}
+</script>
+</body>
+</html>

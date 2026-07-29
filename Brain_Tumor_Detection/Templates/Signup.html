@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Create account — NeuroScan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090d;--surface:#0f1117;--card:#151921;
+  --border:rgba(255,255,255,0.07);--border-md:rgba(255,255,255,0.13);
+  --text:#e4e8f0;--muted:#7a8094;--dim:#454c60;
+  --accent:#4f8ef7;--accent-glow:rgba(79,142,247,0.18);
+  --danger:#f87171;--danger-bg:rgba(248,113,113,0.1);
+  --radius:12px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  -webkit-font-smoothing:antialiased;}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(79,142,247,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(79,142,247,0.03) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;
+}
+.wrap{width:100%;max-width:420px;padding:1.5rem;}
+.logo{text-align:center;margin-bottom:2rem;}
+.logo-mark{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:48px;height:48px;border-radius:14px;
+  background:var(--accent-glow);border:1px solid rgba(79,142,247,0.25);margin-bottom:1rem;
+}
+.logo-mark svg{width:24px;height:24px;stroke:var(--accent);}
+.logo h1{font-family:'DM Serif Display',serif;font-size:1.6rem;font-weight:400;}
+.logo p{color:var(--muted);font-size:14px;margin-top:4px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:2rem;}
+.field{margin-bottom:1.1rem;}
+.field label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:6px;}
+.field input{
+  width:100%;padding:10px 14px;background:var(--surface);
+  border:1px solid var(--border-md);border-radius:9px;
+  color:var(--text);font-size:14px;font-family:'Inter',sans-serif;
+  outline:none;transition:border-color .15s,box-shadow .15s;
+}
+.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.field input::placeholder{color:var(--dim);}
+.hint{font-size:11px;color:var(--dim);margin-top:4px;}
+.btn{
+  width:100%;padding:11px;border-radius:9px;border:none;
+  background:var(--accent);color:#fff;font-size:14px;font-weight:500;
+  cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s,transform .1s;
+  margin-top:.5rem;
+}
+.btn:hover{background:#6fa3f9;}
+.btn:active{transform:scale(0.99);}
+.alt{text-align:center;margin-top:1.25rem;font-size:13px;color:var(--muted);}
+.alt a{color:var(--accent);text-decoration:none;}
+.alt a:hover{text-decoration:underline;}
+.flash{padding:10px 14px;border-radius:9px;font-size:13px;margin-bottom:1rem;
+  background:var(--danger-bg);border:1px solid rgba(248,113,113,.25);color:var(--danger);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/><path d="M12 2a10 10 0 1 0 10 10"/>
+        <path d="M12 6v2M12 16v2M6 12H4M20 12h-2"/>
+      </svg>
+    </div>
+    <h1>NeuroScan</h1>
+    <p>Create your account</p>
+  </div>
+
+  <div class="card">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="field">
+        <label>Full name</label>
+        <input type="text" name="name" placeholder="Dr. Jane Smith" required autocomplete="name"/>
+      </div>
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" name="email" placeholder="you@hospital.com" required autocomplete="email"/>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="••••••••" required minlength="8"/>
+        <div class="hint">At least 8 characters</div>
+      </div>
+      <button type="submit" class="btn">Create account</button>
+    </form>
+
+    <div class="alt">
+      Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
