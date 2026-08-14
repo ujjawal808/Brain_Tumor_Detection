@@ -1,250 +1,921 @@
 <div align="center">
 
-<h1>🧠 NeuroScan — Brain Tumor Detection</h1>
+# 🧠 NeuroScan
+
+### AI-Powered Brain Tumor Detection from MRI Scans
 
 <p>
-  A deep-learning powered web application that detects brain tumors from MRI scans in seconds.<br/>
-  Upload a scan, get an instant prediction with confidence scores — no radiologist waiting room required.
+  <strong>A deep-learning powered web application for multi-class brain tumor classification using MRI images.</strong>
 </p>
 
 <p>
+  Upload an MRI scan → Validate the image → Predict the tumor class → View confidence scores → Save scan history
+</p>
+
+<p>
+  <a href="https://github.com/ujjawal808/Brain_Tumor_Detection">
+    <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github"/>
+  </a>
   <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
   <img src="https://img.shields.io/badge/Flask-3.1-000000?style=for-the-badge&logo=flask&logoColor=white"/>
   <img src="https://img.shields.io/badge/TensorFlow-2.21-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Keras-3.15-D00000?style=for-the-badge&logo=keras&logoColor=white"/>
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Keras-3.x-D00000?style=for-the-badge&logo=keras&logoColor=white"/>
+  <img src="https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white"/>
 </p>
 
 <p>
-  <img src="https://img.shields.io/badge/Accuracy-High-34d399?style=flat-square"/>
-  <img src="https://img.shields.io/badge/Classes-4%20Tumor%20Types-4f8ef7?style=flat-square"/>
-  <img src="https://img.shields.io/badge/Database-SQLite-003B57?style=flat-square&logo=sqlite"/>
-  <img src="https://img.shields.io/badge/Auth-Session%20Based-7c3aed?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Computer%20Vision-MRI%20Analysis-6366F1?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Classification-4%20Classes-10B981?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Authentication-Session%20Based-8B5CF6?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Status-Active-22C55E?style=flat-square"/>
 </p>
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## 📌 Overview
 
-- [Overview](#-overview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [How It Works](#-how-it-works)
-- [Tumor Classes](#-tumor-classes)
-- [API Reference](#-api-reference)
-- [Contributing](#-contributing)
-- [License](#-license)
+**NeuroScan** is a full-stack deep-learning web application designed to classify brain MRI scans into four categories:
 
----
+* 🧬 **Glioma**
+* 🧠 **Meningioma**
+* 🩺 **Pituitary Tumor**
+* ✅ **No Tumor**
 
-## 🔬 Overview
+The application combines **deep learning, image preprocessing, MRI-specific validation, confidence filtering, user authentication, and database-backed scan history** into a single web interface.
 
-**NeuroScan** is a full-stack medical imaging assistant that uses a Convolutional Neural Network (CNN) trained on MRI brain scans to classify tumors into four categories. It wraps the model in a sleek, dark-themed web app with user authentication, scan history, and real-time confidence visualization.
+Instead of directly sending every uploaded image to the tumor classifier, NeuroScan first performs lightweight image checks to identify images that are unlikely to be brain MRI scans. Valid scans are then processed by the trained classification model.
 
-> ⚠️ **Disclaimer:** This tool is intended for educational and research purposes only. It is **not** a substitute for professional medical diagnosis.
+### 🎯 Project Goal
+
+The primary goal of NeuroScan is to demonstrate how a trained deep-learning image classification model can be integrated into a practical web application with:
+
+> **Image Upload → Validation → AI Prediction → Confidence Analysis → Database Storage → Visualization**
 
 ---
 
-## ✨ Features
+## ⚠️ Medical Disclaimer
 
-| Feature | Description |
-|---|---|
-| 🧬 **4-Class Classification** | Detects Glioma, Meningioma, Pituitary Tumor, or No Tumor |
-| 📊 **Confidence Visualization** | Animated donut chart + score bars for all 4 classes |
-| 🔐 **User Authentication** | Secure signup/login with hashed passwords (Werkzeug) |
-| 🗄️ **Scan History** | Every scan is saved to SQLite — last 5 shown on dashboard |
-| 📈 **Personal Stats** | Total scans, tumor count, clear scan count per user |
-| 🖼️ **Drag & Drop Upload** | Drop a JPG/PNG MRI scan directly onto the upload zone |
-| 🌙 **Dark UI** | Minimal dark-mode interface built with plain CSS |
-| ⚡ **Real-time Results** | Async fetch — no page reload needed |
+> **NeuroScan is an educational and research project.**
+>
+> It is **not a medical diagnostic system** and should not be used as a substitute for a qualified radiologist, neurologist, or other healthcare professional.
+>
+> Model predictions may be incorrect and should not be used to make medical decisions.
 
 ---
 
-## 🛠️ Tech Stack
+# ✨ Key Features
 
-### Backend
-- **Python 3.12** — Core language
-- **Flask 3.1** — Web framework & routing
-- **Flask-SQLAlchemy** — ORM for SQLite database
-- **TensorFlow 2.21 / Keras 3.15** — Deep learning model inference
-- **Werkzeug** — Password hashing & WSGI utilities
-- **Pillow** — MRI image preprocessing
+<table>
+<tr>
+<td width="50%">
 
-### Frontend
-- **Jinja2** — Server-side HTML templating
-- **Vanilla JS** — Async fetch, drag-and-drop, Canvas donut chart
-- **CSS Custom Properties** — Dark theme design system (no framework needed)
+### 🧠 AI Classification
 
-### Database
-- **SQLite** — Zero-config embedded database
-  - `User` table — name, email, password hash, created_at
-  - `Scan` table — prediction, confidence, tumor flag, timestamp
+Classifies MRI scans into **4 categories** using a trained deep-learning model.
+
+### 🔍 MRI Validation
+
+Performs lightweight image checks before classification to reject obvious non-MRI or unsuitable images.
+
+### 📊 Confidence Analysis
+
+Returns confidence scores for all four classes and applies a confidence threshold before accepting a prediction.
+
+### 🔄 Test-Time Augmentation
+
+Uses multiple model predictions and averages the results to provide more stable prediction scores.
+
+</td>
+
+<td width="50%">
+
+### 🔐 User Authentication
+
+Signup/login system with password hashing using Werkzeug.
+
+### 🗄️ Scan History
+
+Stores user scan results, predictions, confidence values, and timestamps in SQLite.
+
+### 📈 Personal Dashboard
+
+Displays total scans, tumor detections, clear scans, and recent scan history.
+
+### 🎨 Modern Dark UI
+
+Responsive dark-themed interface with drag-and-drop image upload and dynamic prediction visualization.
+
+</td>
+</tr>
+</table>
 
 ---
 
-## 📁 Project Structure
+# 🧩 System Architecture
 
+```text
+                         ┌─────────────────────┐
+                         │       User          │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │   Upload MRI Scan   │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                    ┌──────────────────────────────┐
+                    │     Image Preprocessing      │
+                    │       PIL + NumPy            │
+                    └──────────────┬───────────────┘
+                                   │
+                                   ▼
+                    ┌──────────────────────────────┐
+                    │     MRI Validation Layer     │
+                    │                              │
+                    │ • Aspect Ratio               │
+                    │ • Color / Grayscale Check    │
+                    │ • Dark Background Check      │
+                    │ • Uniform Image Check        │
+                    │ • Brightness Check            │
+                    └──────────────┬───────────────┘
+                                   │
+                            Valid MRI?
+                           /           \
+                         No             Yes
+                         │               │
+                         ▼               ▼
+                   Reject Image    ┌─────────────────┐
+                                   │ Tumor Classifier│
+                                   └────────┬────────┘
+                                            │
+                                            ▼
+                                   ┌─────────────────┐
+                                   │ TTA Prediction  │
+                                   │ Multiple Runs   │
+                                   │ + Averaging     │
+                                   └────────┬────────┘
+                                            │
+                                            ▼
+                                  ┌──────────────────┐
+                                  │ Confidence Check │
+                                  └────────┬─────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │  Prediction + Scores   │
+                              └────────────┬───────────┘
+                                           │
+                              ┌────────────┴────────────┐
+                              ▼                         ▼
+                     ┌─────────────────┐       ┌─────────────────┐
+                     │ SQLite Database │       │ Web Dashboard   │
+                     │   Scan History  │       │ Results + Stats │
+                     └─────────────────┘       └─────────────────┘
 ```
+
+---
+
+# 🧪 Supported Tumor Classes
+
+|     Class    | Display Label          | Description                                    |
+| :----------: | ---------------------- | ---------------------------------------------- |
+|   `glioma`   | 🧬 **Glioma**          | Tumor originating from glial cells.            |
+| `meningioma` | 🧠 **Meningioma**      | Tumor arising from the meninges.               |
+|   `notumor`  | ✅ **No Tumor**         | No tumor detected by the classification model. |
+|  `pituitary` | 🩺 **Pituitary Tumor** | Tumor located around the pituitary region.     |
+
+---
+
+# 🔬 MRI Validation Pipeline
+
+One of the important additions to the application is an image validation layer that runs **before the tumor classifier**.
+
+The validation function performs several lightweight checks.
+
+### 1️⃣ Aspect Ratio Check
+
+Images that are extremely tall or wide are rejected because they may not resemble the expected MRI input format.
+
+```python
+ratio = height / width
+
+if ratio > 1.6 or ratio < 0.6:
+    reject_image()
+```
+
+### 2️⃣ Color Check
+
+The application checks whether the image is strongly colored instead of approximately grayscale.
+
+```text
+RGB Image
+    │
+    ▼
+Channel Difference Analysis
+    │
+    ├── High Difference → Reject
+    │
+    └── Low Difference → Continue
+```
+
+### 3️⃣ Dark Background Check
+
+Brain MRI images commonly contain a significant dark background around the brain region.
+
+### 4️⃣ Uniform Image Check
+
+Extremely uniform images can indicate blank or corrupted files.
+
+### 5️⃣ Brightness Check
+
+Images that are excessively bright are rejected as potentially unsuitable MRI inputs.
+
+---
+
+# 🤖 Model Prediction Pipeline
+
+After validation, the image enters the tumor classification stage.
+
+```text
+MRI Image
+    │
+    ▼
+Resize to 260 × 260
+    │
+    ▼
+EfficientNetV2 Preprocessing
+    │
+    ▼
+Tumor Classification Model
+    │
+    ▼
+Multiple Predictions
+    │
+    ▼
+Average Predictions
+    │
+    ▼
+4-Class Probability Scores
+    │
+    ▼
+Highest Probability Class
+```
+
+The current application uses **Test-Time Augmentation-style repeated inference** by running the model multiple times and averaging the resulting prediction vectors.
+
+```python
+scores = [
+    model.predict(arr, verbose=0)[0]
+    for _ in range(5)
+]
+
+final_score = np.mean(scores, axis=0)
+```
+
+---
+
+# 📊 Confidence Threshold
+
+After classification, NeuroScan checks the highest prediction confidence.
+
+The current tumor confidence threshold is:
+
+```python
+TUMOR_CONFIDENCE = 0.60
+```
+
+If the confidence is below the threshold, the application asks the user to provide a clearer or different MRI scan rather than presenting a low-confidence classification as a normal result.
+
+---
+
+# 🛠️ Technology Stack
+
+## Backend
+
+| Technology                | Purpose                                 |
+| ------------------------- | --------------------------------------- |
+| 🐍 **Python**             | Core programming language               |
+| 🌶️ **Flask**             | Web application framework               |
+| 🗃️ **Flask-SQLAlchemy**  | Database ORM                            |
+| 🤖 **TensorFlow / Keras** | Deep-learning model inference           |
+| 🖼️ **Pillow**            | Image loading and preprocessing         |
+| 🔢 **NumPy**              | Numerical and image-array operations    |
+| 🔐 **Werkzeug**           | Password hashing and security utilities |
+
+## Frontend
+
+| Technology | Purpose                          |
+| ---------- | -------------------------------- |
+| HTML5      | Page structure                   |
+| CSS3       | UI and responsive styling        |
+| JavaScript | Dynamic interactions             |
+| Jinja2     | Server-side templating           |
+| Fetch API  | Asynchronous prediction requests |
+| Canvas     | Prediction visualization         |
+
+## Database
+
+**SQLite**
+
+Main entities:
+
+```text
+User
+ ├── id
+ ├── name
+ ├── email
+ ├── password_hash
+ └── created_at
+
+Scan
+ ├── id
+ ├── user_id
+ ├── filename
+ ├── prediction
+ ├── label
+ ├── confidence
+ ├── is_tumor
+ └── scanned_at
+```
+
+---
+
+# 📁 Project Structure
+
+```text
 Brain_Tumor_Detection/
-├── app.py                    # Flask app — routes, auth, prediction logic
-├── main.py                   # PyCharm entry point placeholder
-├── model/
-│   └── brain_tumor_model.keras   # Trained CNN model (Keras format)
-├── Templates/
-│   ├── dashboard.html        # Main scan upload + result UI
-│   ├── login.html            # Sign-in page
-│   └── Signup.html           # Registration page
-├── instance/
-│   └── neuroscan.db          # SQLite database (auto-created)
-├── requirements.txt          # Python dependencies
-└── .gitignore
+│
+├── Brain_Tumor_Detection/
+│   │
+│   ├── app.py
+│   │
+│   ├── main.py
+│   │
+│   ├── Templates/
+│   │   ├── dashboard.html
+│   │   ├── login.html
+│   │   └── Signup.html
+│   │
+│   ├── static/
+│   │   ├── css/
+│   │   ├── js/
+│   │   └── images/
+│   │
+│   └── instance/
+│       └── neuroscan.db
+│
+├── requirements.txt
+├── .gitignore
+└── README.md
 ```
+
+> **Note:** The trained model file is not included in the repository if it is excluded by `.gitignore` or GitHub file-size limitations. Configure the model path in `app.py` according to your local environment.
 
 ---
 
-## 🚀 Getting Started
+# 🚀 Getting Started
 
-### Prerequisites
+## Prerequisites
 
-- Python **3.10+**
-- pip
-- Git
+Make sure you have:
 
-### 1 — Clone the repository
+* Python **3.10+**
+* pip
+* Git
+* A compatible trained Keras model
+* Windows, macOS, or Linux
+
+---
+
+## 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/ujjawal808/Brain_Tumor_Detection.git
-cd Brain_Tumor_Detection/Brain_Tumor_Detection
 ```
 
-### 2 — Create a virtual environment
+Navigate into the project:
 
 ```bash
+cd Brain_Tumor_Detection
+cd Brain_Tumor_Detection
+```
+
+---
+
+## 2️⃣ Create a Virtual Environment
+
+### Windows
+
+```powershell
 python -m venv .venv
-
-# Windows
 .venv\Scripts\activate
+```
 
-# macOS / Linux
+### macOS / Linux
+
+```bash
+python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### 3 — Install dependencies
+---
+
+## 3️⃣ Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4 — Add the model file
+---
 
-Download or place your trained model file at:
+## 4️⃣ Configure the Model
 
-```
-Brain_Tumor_Detection/model/brain_tumor_model.keras
-```
+Place your trained model in the appropriate location and configure the path used by `app.py`.
 
-Then update line 47 of [`app.py`](Brain_Tumor_Detection/app.py) to point to the correct path:
+For example:
 
 ```python
-model = load_model("model/brain_tumor_model.keras")
+tumor_model = load_model(
+    r"path/to/brain_tumor_model_v2.h5"
+)
 ```
 
-### 5 — Run the app
+### Recommended Improvement
+
+For portability, avoid hard-coded Windows paths and use a project-relative path:
+
+```python
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+
+MODEL_PATH = BASE_DIR / "model" / "brain_tumor_model_v2.h5"
+
+tumor_model = load_model(MODEL_PATH)
+```
+
+This makes the application easier to run on other machines.
+
+---
+
+## 5️⃣ Run the Application
 
 ```bash
 python app.py
 ```
 
-Open your browser at **[http://127.0.0.1:5000](http://127.0.0.1:5000)**
+The Flask development server will start.
 
----
+Open:
 
-## ⚙️ How It Works
-
-```
-User uploads MRI  ──▶  Flask /predict  ──▶  PIL resize to 180×180
-                                                     │
-                                              TF model.predict()
-                                                     │
-                                        softmax scores for 4 classes
-                                                     │
-                              ┌──────────────────────┴────────────────────────┐
-                              │  Save Scan to DB   │  Return JSON to browser  │
-                              └────────────────────┴────────────────────────  ┘
-                                                     │
-                                        Animated donut chart + bars
+```text
+http://127.0.0.1:5000
 ```
 
-1. The uploaded image is read into memory (no disk writes).
-2. It is converted to RGB and resized to **180 × 180 px**.
-3. The Keras CNN outputs a **softmax probability vector** over 4 classes.
-4. The top class and its confidence are returned as JSON.
-5. The result is saved to the user's scan history in SQLite.
-6. The frontend renders the donut chart and score bars in real time.
+---
+
+# 🖥️ Application Flow
+
+### 🔐 Step 1 — Create an Account
+
+Register using:
+
+```text
+Name
+Email
+Password
+```
+
+Passwords are stored using hashing rather than plain text.
 
 ---
 
-## 🧪 Tumor Classes
+### 🔑 Step 2 — Login
 
-| Class | Label | Description |
-|---|---|---|
-| `glioma` | **Glioma** | Malignant tumor originating in glial cells. Requires immediate specialist review. |
-| `meningioma` | **Meningioma** | Tumor arising from the meninges. Usually benign and slow-growing. |
-| `notumor` | **No Tumor** | No tumor tissue detected. Brain tissue appears structurally normal. |
-| `pituitary` | **Pituitary Tumor** | Tumor at the base of the brain. Usually benign but may affect hormones. |
+Authenticate using your registered email and password.
 
 ---
 
-## 📡 API Reference
+### 📤 Step 3 — Upload MRI
 
-### `POST /predict`
+Upload a supported image file through the dashboard.
 
-Requires an active session (logged-in user).
+```text
+JPG / JPEG / PNG
+```
 
-**Request** — `multipart/form-data`
+---
 
-| Field | Type | Description |
-|---|---|---|
-| `file` | `image/*` | Brain MRI scan (JPG or PNG) |
+### 🔍 Step 4 — Image Validation
 
-**Response** — `application/json`
+The application performs preliminary MRI-specific checks.
+
+```text
+Is image suitable?
+       │
+   ┌───┴───┐
+   │       │
+  NO      YES
+   │       │
+Reject    Model
+```
+
+---
+
+### 🧠 Step 5 — AI Prediction
+
+The classification model predicts one of the four classes.
+
+---
+
+### 📊 Step 6 — View Results
+
+The dashboard displays:
+
+* Predicted class
+* Confidence percentage
+* Scores for all classes
+* Tumor / No Tumor status
+* Prediction description
+
+---
+
+### 🗄️ Step 7 — Save Scan
+
+The result is stored in SQLite and becomes part of the user's scan history.
+
+---
+
+# 📡 API Reference
+
+## `POST /predict`
+
+Predicts the class of an uploaded MRI scan.
+
+### Authentication
+
+A valid logged-in session is required.
+
+### Request
+
+```text
+Content-Type: multipart/form-data
+```
+
+| Parameter | Type  | Required | Description          |
+| --------- | ----- | :------: | -------------------- |
+| `file`    | Image |     ✅    | MRI image to analyze |
+
+### Example Response
 
 ```json
 {
-  "prediction":  "glioma",
-  "label":       "Glioma",
-  "confidence":  94.3,
-  "all_scores":  { "glioma": 94.3, "meningioma": 3.1, "notumor": 1.4, "pituitary": 1.2 },
-  "description": "A malignant tumor originating in glial cells...",
-  "is_tumor":    true
+  "prediction": "glioma",
+  "label": "Glioma",
+  "confidence": 94.3,
+  "all_scores": {
+    "glioma": 94.3,
+    "meningioma": 3.1,
+    "notumor": 1.4,
+    "pituitary": 1.2
+  },
+  "description": "A malignant tumor originating in glial cells.",
+  "is_tumor": true
 }
 ```
 
 ---
 
-## 🤝 Contributing
+# 🔐 Security Features
 
-Contributions, issues and feature requests are welcome!
+NeuroScan includes several basic application-level security measures:
 
-1. Fork the repository
-2. Create your feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
+### Password Hashing
+
+Passwords are hashed using Werkzeug:
+
+```python
+generate_password_hash(password)
+```
+
+Authentication is verified using:
+
+```python
+check_password_hash(...)
+```
+
+### Session-Based Authentication
+
+Protected pages require a valid user session.
+
+```python
+@login_required
+def dashboard():
+    ...
+```
+
+### User-Specific Scan History
+
+Scans are associated with the authenticated user's ID.
+
+```text
+User
+ │
+ ├── Scan 1
+ ├── Scan 2
+ ├── Scan 3
+ └── Scan 4
+```
 
 ---
 
-## 📄 License
+# 📈 Dashboard
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+The dashboard provides a quick overview of the user's activity.
+
+### Statistics
+
+```text
+┌─────────────────┐
+│   Total Scans   │
+├─────────────────┤
+│       25        │
+└─────────────────┘
+
+┌─────────────────┐
+│ Tumor Detected  │
+├─────────────────┤
+│       14        │
+└─────────────────┘
+
+┌─────────────────┐
+│   No Tumor      │
+├─────────────────┤
+│       11        │
+└─────────────────┘
+```
+
+The recent scan history shows the latest predictions along with confidence and timestamps.
+
+---
+
+# 🧪 Example Prediction Flow
+
+```text
+Uploaded Image
+      │
+      ▼
+┌───────────────┐
+│ MRI Validation│
+└───────┬───────┘
+        │
+        ▼
+┌────────────────────┐
+│ Tumor Classification│
+└─────────┬──────────┘
+          │
+          ▼
+     Prediction
+          │
+     ┌────┴─────┐
+     ▼          ▼
+   Tumor      No Tumor
+     │          │
+     └────┬─────┘
+          ▼
+   Confidence Score
+          │
+          ▼
+     Save to DB
+          │
+          ▼
+   Display Results
+```
+
+---
+
+# 🧮 Complexity Overview
+
+| Operation           |       Approximate Complexity |
+| ------------------- | ---------------------------: |
+| Image loading       |                         O(P) |
+| Image preprocessing |                         O(P) |
+| Pixel validation    |                         O(P) |
+| Model inference     |              Model-dependent |
+| TTA inference       |       O(N × Model Inference) |
+| Database lookup     |      O(log n) / DB-dependent |
+| Dashboard rendering | O(k), where k = recent scans |
+
+Where **P** represents the number of processed image pixels.
+
+---
+
+# 📚 Learning Objectives
+
+This project demonstrates practical experience with:
+
+* 🧠 Deep Learning
+* 🖼️ Image Classification
+* 👁️ Computer Vision
+* 🐍 Python
+* 🌶️ Flask
+* 🤖 TensorFlow / Keras
+* 🔢 NumPy
+* 🖼️ Pillow
+* 🗃️ SQL / SQLite
+* 🔐 Authentication
+* 🌐 REST-style APIs
+* 🎨 Frontend development
+* 📊 Confidence analysis
+* 🔄 Test-Time Augmentation
+* 🧪 Input validation
+* 🔗 Full-stack application integration
+
+---
+
+# 🚧 Future Improvements
+
+The project can be extended with:
+
+* [ ] Replace hard-coded model paths with environment variables
+* [ ] Add model evaluation metrics dashboard
+* [ ] Add confusion matrix visualization
+* [ ] Add precision, recall and F1-score reporting
+* [ ] Add Grad-CAM heatmaps for model explainability
+* [ ] Add downloadable prediction reports
+* [ ] Add stronger image-type validation
+* [ ] Add REST API authentication
+* [ ] Add Docker support
+* [ ] Deploy the application to a cloud platform
+* [ ] Add automated unit and integration tests
+* [ ] Improve responsive mobile UI
+* [ ] Add model version tracking
+
+---
+
+# 🧪 Testing Checklist
+
+Before deployment, test the following:
+
+```text
+Authentication
+├── Signup
+├── Login
+├── Incorrect password
+└── Logout
+
+Image Upload
+├── Valid MRI
+├── Invalid image
+├── Unsupported file
+├── Blank image
+└── Non-MRI image
+
+Prediction
+├── Glioma
+├── Meningioma
+├── No Tumor
+├── Pituitary
+└── Low-confidence image
+
+Database
+├── Scan saved
+├── User-specific history
+└── Dashboard statistics
+```
+
+---
+
+# 🐛 Troubleshooting
+
+### `ModuleNotFoundError`
+
+Install the dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+### Model Not Found
+
+Check the model path configured in:
+
+```text
+Brain_Tumor_Detection/app.py
+```
+
+---
+
+### Port Already in Use
+
+Run Flask on another port:
+
+```python
+app.run(debug=True, port=5001)
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5001
+```
+
+---
+
+### TensorFlow / Keras Compatibility
+
+Make sure the installed TensorFlow, Keras, Python version, and trained model format are compatible.
+
+Check:
+
+```bash
+python --version
+pip show tensorflow
+pip show keras
+```
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome!
+
+### 1. Fork the repository
+
+```bash
+git clone https://github.com/ujjawal808/Brain_Tumor_Detection.git
+```
+
+### 2. Create a feature branch
+
+```bash
+git checkout -b feature/amazing-feature
+```
+
+### 3. Commit your changes
+
+```bash
+git add .
+git commit -m "Add amazing feature"
+```
+
+### 4. Push your branch
+
+```bash
+git push origin feature/amazing-feature
+```
+
+### 5. Open a Pull Request
+
+Explain what you changed and why.
+
+---
+
+# 📄 License
+
+This project is licensed under the **MIT License**.
+
+See the `LICENSE` file for details.
+
+---
+
+# 👨‍💻 Author
+
+<div align="center">
+
+### Ujjawal Baliyan
+
+<p>
+  <a href="https://github.com/ujjawal808">
+    <img src="https://img.shields.io/badge/GitHub-Ujjawal%20Baliyan-181717?style=for-the-badge&logo=github"/>
+  </a>
+</p>
+
+<p>
+  <strong>MCA Student • Software Development • AI/ML • Data Structures & Algorithms</strong>
+</p>
+
+</div>
 
 ---
 
 <div align="center">
-  <p>Made with ❤️ by <a href="https://github.com/ujjawal808">Ujjawal Baliyan</a></p>
-  <p><sub>For educational and research purposes only. Not for clinical use.</sub></p>
+
+### ⭐ If you found this project useful, consider giving it a star!
+
+<br/>
+
+**Built with 🧠 Deep Learning + 🐍 Python + 🌶️ Flask + 🤖 TensorFlow**
+
+<br/>
+
+<sub>
+For educational and research purposes only. Not intended for clinical diagnosis.
+</sub>
+
 </div>
