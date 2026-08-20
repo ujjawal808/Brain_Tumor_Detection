@@ -37,16 +37,13 @@ class Scan(db.Model):
 
 # ── Load models ───────────────────────────────────────────────────────────────
 
-<<<<<<< HEAD:Brain_Tumor_Detection/app.py
 # ── Load ML model ─────────────────────────────────────────────────────────────
-model = load_model(r"C:\Users\ujjawal baliyan\Downloads\brain_tumor_model2.keras")
+tumor_model = load_model(
+    r"C:\Users\ujjawal baliyan\Downloads\brain_tumor_model_v2.h5"
+)
+
 CLASS_NAMES = ['glioma', 'meningioma', 'notumor', 'pituitary']
-IMG_SIZE = 180
-=======
-# Stage 2: your existing tumor classifier
-tumor_model  = load_model(r"C:\Users\ujjawal baliyan\Downloads\brain_tumor_model_v2.h5")
-CLASS_NAMES  = ['glioma', 'meningioma', 'notumor', 'pituitary']
-TUMOR_SIZE   = 260
+TUMOR_SIZE = 260
 
 # ── Thresholds ────────────────────────────────────────────────────────────────
 # HOW TO TUNE THESE:
@@ -120,7 +117,7 @@ def predict_with_tta(model, arr, n=5):
     scores = [model.predict(arr, verbose=0)[0] for _ in range(n)]
     return np.mean(scores, axis=0)
 
->>>>>>> 0d54133 (Add model evaluation metrics and confusion matrix):app.py
+
 
 # ── Auth helper ───────────────────────────────────────────────────────────────
 
@@ -202,17 +199,9 @@ def predict():
     file = request.files['file']
     try:
         img_bytes = file.read()
-<<<<<<< HEAD:Brain_Tumor_Detection/app.py
-        img = Image.open(io.BytesIO(img_bytes)).convert('RGB').resize((IMG_SIZE, IMG_SIZE))
-        arr = np.expand_dims(np.array(img), axis=0)
-
-       # raw   = model.predict(arr, verbose=0)
-        score = model.predict(arr,verbose=0)[0]
-=======
         img = Image.open(io.BytesIO(img_bytes)).convert('RGB')
 
         # ── STAGE 1: pixel-level heuristic checks ────────────────────────────
-        # Fast rules that don't need the model at all
         raw_arr = np.array(img.resize((260, 260)))
         is_valid, reason = is_likely_brain_mri(raw_arr)
 
@@ -223,19 +212,16 @@ def predict():
             }), 400
 
         # ── STAGE 2: run tumor classifier ────────────────────────────────────
-        arr   = preprocess_for_model(img, TUMOR_SIZE)
+        arr = preprocess_for_model(img, TUMOR_SIZE)
         score = predict_with_tta(tumor_model, arr, n=5)
->>>>>>> 0d54133 (Add model evaluation metrics and confusion matrix):app.py
+
 
         top_idx    = int(np.argmax(score))
         confidence = float(score[top_idx])
         prediction = CLASS_NAMES[top_idx]
         all_scores = {CLASS_NAMES[i]: round(float(score[i]) * 100, 1) for i in range(4)}
 
-<<<<<<< HEAD:Brain_Tumor_Detection/app.py
-=======
         # ── STAGE 3: confidence threshold on tumor result ─────────────────────
-        # Lowered to 0.60 since stage 1 already filtered non-brain images
         if confidence < TUMOR_CONFIDENCE:
             return jsonify({
                 'error': f'Image quality or scan type is unclear '
@@ -245,7 +231,6 @@ def predict():
 
         confidence = round(confidence * 100, 1)
 
->>>>>>> 0d54133 (Add model evaluation metrics and confusion matrix):app.py
         labels = {
             'glioma':     'Glioma',
             'meningioma': 'Meningioma',
